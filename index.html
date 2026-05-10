@@ -1,15 +1,1410 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My First Website</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INVEST ACADEMY | 投資用語辞典</title>
+<meta name="description" content="株式投資・FX・投資信託など、投資に必要な用語を分かりやすく解説。初心者から上級者まで役立つ投資専門サイト。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Noto+Serif+JP:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   CSS VARIABLES & RESET
+══════════════════════════════════════ */
+:root {
+  --bg-deepblack: #080a0e;
+  --bg-darkcard:  #0d1117;
+  --bg-card:      #111620;
+  --bg-elevated:  #161d2a;
+  --gold:         #c9a84c;
+  --gold-light:   #e8c97a;
+  --gold-dim:     #7a6030;
+  --platinum:     #d4d4d4;
+  --silver:       #9aa3b0;
+  --accent-teal:  #00d4aa;
+  --accent-red:   #e05555;
+  --accent-blue:  #4a9eff;
+  --border:       rgba(201,168,76,0.18);
+  --border-dim:   rgba(255,255,255,0.06);
+  --text-primary: #f0ece4;
+  --text-secondary:#a8a09060;
+  --text-muted:   #5a6070;
+  --font-display: 'Playfair Display', serif;
+  --font-body:    'Noto Serif JP', serif;
+  --font-mono:    'DM Mono', monospace;
+  --radius:       8px;
+  --radius-lg:    16px;
+  --shadow-gold:  0 0 40px rgba(201,168,76,0.12);
+  --shadow-card:  0 8px 32px rgba(0,0,0,0.6);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deepblack);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ══ NOISE TEXTURE OVERLAY ══ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ══════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deepblack); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+
+/* ══════════════════════════════════════
+   HEADER / NAV
+══════════════════════════════════════ */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,10,14,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+nav {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-icon {
+  width: 32px; height: 32px;
+  border: 1.5px solid var(--gold);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 32px;
+  align-items: center;
+}
+.nav-links a {
+  text-decoration: none;
+  color: var(--silver);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--gold-light); }
+
+.nav-cta {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: #000 !important;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 12px !important;
+}
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+  overflow: hidden;
+}
+
+/* 背景グリッド */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
+
+/* グロー */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(201,168,76,0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.hero-inner { position: relative; z-index: 1; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: rgba(201,168,76,0.06);
+  color: var(--gold);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 6vw, 72px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, var(--gold-light) 50%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 16px;
+  color: var(--silver);
+  max-width: 560px;
+  margin: 0 auto 40px;
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.hero-stat {
+  text-align: center;
+}
+.hero-stat .num {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--gold);
+  display: block;
+}
+.hero-stat .label {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════
+   SECTION WRAPPER
+══════════════════════════════════════ */
+.section {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+.section-header {
+  margin-bottom: 56px;
+}
+
+.section-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--gold);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+/* ══════════════════════════════════════
+   DIVIDER
+══════════════════════════════════════ */
+.divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════
+   SEARCH BAR
+══════════════════════════════════════ */
+.search-section {
+  padding: 40px 24px 60px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.search-wrap {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 18px 60px 18px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.1), var(--shadow-gold);
+}
+.search-input::placeholder { color: var(--text-muted); }
+
+.search-icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  font-size: 20px;
+  pointer-events: none;
+}
+
+/* カテゴリタブ */
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+.tab-btn {
+  padding: 8px 18px;
+  border: 1px solid var(--border-dim);
+  background: transparent;
+  color: var(--silver);
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+.tab-btn:hover, .tab-btn.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(201,168,76,0.08);
+}
+
+/* ══════════════════════════════════════
+   TERMS GRID
+══════════════════════════════════════ */
+.terms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.term-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+  cursor: pointer;
+  animation: fadeUp 0.5s ease both;
+}
+.term-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border);
+  box-shadow: var(--shadow-gold), var(--shadow-card);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* カード内の画像エリア */
+.card-visual {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  font-size: 52px;
+}
+
+.card-visual.stock   { background: linear-gradient(135deg, #0a1628, #1a2d4a); }
+.card-visual.fx      { background: linear-gradient(135deg, #0a1a18, #0d2d28); }
+.card-visual.bond    { background: linear-gradient(135deg, #1a1228, #2a1848); }
+.card-visual.fund    { background: linear-gradient(135deg, #1a1008, #2d1e0a); }
+.card-visual.risk    { background: linear-gradient(135deg, #1a0808, #2d1010); }
+.card-visual.macro   { background: linear-gradient(135deg, #0a1020, #101828); }
+.card-visual.chart   { background: linear-gradient(135deg, #0e1a0a, #182a10); }
+.card-visual.crypto  { background: linear-gradient(135deg, #1a1400, #2d2408); }
+
+/* SVGチャート背景 */
+.card-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80'%3E%3Cpolyline points='0,60 30,45 60,50 90,25 120,30 150,10 200,20' fill='none' stroke='rgba(201,168,76,0.15)' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: cover;
+}
+
+.card-emoji { position: relative; z-index: 1; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
+
+.card-category-badge {
+  position: absolute;
+  top: 12px; right: 12px;
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  font-family: var(--font-mono);
+}
+
+.card-body { padding: 20px 22px 22px; }
+
+.card-term {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.card-reading {
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  font-family: var(--font-mono);
+  margin-bottom: 12px;
+}
+.card-desc {
+  font-size: 13.5px;
+  color: var(--silver);
+  line-height: 1.75;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-dim);
+}
+
+.difficulty {
+  display: flex;
+  gap: 3px;
+}
+.diff-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border-dim);
+}
+.diff-dot.active { background: var(--gold); }
+
+.card-link {
+  font-size: 11px;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.2s;
+}
+.card-link:hover { gap: 8px; }
+
+/* ══════════════════════════════════════
+   MODAL（詳細表示）
+══════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  max-width: 660px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.8), var(--shadow-gold);
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from { opacity:0; transform: scale(0.95) translateY(10px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  padding: 28px 28px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.modal-close {
+  background: none;
+  border: 1px solid var(--border-dim);
+  color: var(--silver);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.modal-close:hover { border-color: var(--gold); color: var(--gold); }
+
+.modal-term { font-family: var(--font-display); font-size: 30px; font-weight: 700; }
+.modal-reading { font-size: 13px; color: var(--gold); letter-spacing: 0.1em; font-family: var(--font-mono); margin-top: 4px; }
+
+.modal-body { padding: 24px 28px 32px; }
+.modal-section { margin-bottom: 24px; }
+.modal-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.modal-section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+.modal-section p { font-size: 14.5px; color: var(--silver); line-height: 1.85; }
+
+.modal-example {
+  background: var(--bg-elevated);
+  border-left: 3px solid var(--gold);
+  padding: 14px 16px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+.modal-tags {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.modal-tag {
+  padding: 4px 12px;
+  border: 1px solid var(--border-dim);
+  border-radius: 100px;
+  font-size: 11px;
+  color: var(--silver);
+  background: var(--bg-elevated);
+}
+
+/* ══════════════════════════════════════
+   SNS / LINKS SECTION
+══════════════════════════════════════ */
+.links-section {
+  background: var(--bg-darkcard);
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+  padding: 64px 24px;
+}
+
+.links-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.link-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 16px;
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  border: 1px solid var(--border-dim);
+  background: var(--bg-card);
+  transition: all 0.25s;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+.link-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+.link-btn .btn-icon { font-size: 28px; }
+.link-btn .btn-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.link-btn .btn-sub {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* 各SNSカラー */
+.btn-x       { border-color: rgba(255,255,255,0.15); color: #ffffff; }
+.btn-x:hover { border-color: #ffffff; background: rgba(255,255,255,0.05); }
+
+.btn-instagram       { border-color: rgba(225,48,108,0.3); color: #e1306c; }
+.btn-instagram:hover { border-color: #e1306c; background: rgba(225,48,108,0.07); }
+
+.btn-youtube       { border-color: rgba(255,0,0,0.3); color: #ff0000; }
+.btn-youtube:hover { border-color: #ff0000; background: rgba(255,0,0,0.07); }
+
+.btn-note       { border-color: rgba(65,210,135,0.3); color: #41d287; }
+.btn-note:hover { border-color: #41d287; background: rgba(65,210,135,0.07); }
+
+.btn-line       { border-color: rgba(0,185,0,0.3); color: #00b900; }
+.btn-line:hover { border-color: #00b900; background: rgba(0,185,0,0.07); }
+
+.btn-line-special {
+  background: linear-gradient(135deg, #00b900, #00a000) !important;
+  border-color: #00b900 !important;
+  color: #fff !important;
+  grid-column: span 2;
+}
+.btn-line-special:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,185,0,0.3); }
+
+/* ══════════════════════════════════════
+   CONTACT FORM
+══════════════════════════════════════ */
+.contact-section { background: var(--bg-deepblack); }
+
+.form-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-group.full { grid-column: 1/-1; }
+
+.form-label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.form-required {
+  color: var(--accent-red);
+  margin-left: 4px;
+}
+
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+
+.form-textarea { resize: vertical; min-height: 140px; line-height: 1.7; }
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  cursor: pointer;
+}
+.form-select option { background: var(--bg-card); }
+
+.submit-btn {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, var(--gold), #a07828);
+  border: none;
+  border-radius: var(--radius);
+  color: #0a0800;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.25s;
+  margin-top: 8px;
+}
+.submit-btn:hover {
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+  transform: translateY(-1px);
+}
+.submit-btn:active { transform: translateY(0); }
+
+.form-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* フォーム送信後 */
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 48px;
+  background: var(--bg-card);
+  border: 1px solid rgba(0,212,170,0.3);
+  border-radius: var(--radius-lg);
+}
+.form-success .success-icon { font-size: 56px; margin-bottom: 20px; }
+.form-success h3 { font-family: var(--font-display); font-size: 24px; color: var(--accent-teal); margin-bottom: 10px; }
+.form-success p { color: var(--silver); font-size: 14px; }
+
+/* ══════════════════════════════════════
+   TICKER (マーキー)
+══════════════════════════════════════ */
+.ticker-wrap {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+  padding: 10px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-inner {
+  display: inline-flex;
+  animation: ticker 30s linear infinite;
+  gap: 0;
+}
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 32px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--silver);
+}
+.ticker-item .t-name { color: var(--text-primary); font-weight: 500; }
+.ticker-item .t-up   { color: var(--accent-teal); }
+.ticker-item .t-down { color: var(--accent-red); }
+.ticker-sep { color: var(--border-dim); }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer {
+  background: var(--bg-darkcard);
+  border-top: 1px solid var(--border-dim);
+  padding: 56px 24px 32px;
+}
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-brand p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-top: 12px;
+  max-width: 280px;
+}
+.footer-col h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--gold-light); }
+
+.footer-bottom {
+  border-top: 1px solid var(--border-dim);
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-copy { font-size: 12px; color: var(--text-muted); }
+.footer-disclaimer { font-size: 11px; color: var(--text-muted); max-width: 500px; text-align: right; }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .terms-grid { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .hero-stats { gap: 28px; }
+  .btn-line-special { grid-column: span 1; }
+  .footer-disclaimer { text-align: left; }
+}
+@media (max-width: 480px) {
+  .footer-top { grid-template-columns: 1fr; }
+  .links-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
 </head>
 <body>
 
-  <h1>ホームページ完成！</h1>
+<!-- ══ HEADER ══ -->
+<header>
+  <nav>
+    <a href="#" class="logo">
+      <div class="logo-icon">₿</div>
+      INVEST ACADEMY
+    </a>
+    <ul class="nav-links">
+      <li><a href="#dictionary">用語辞典</a></li>
+      <li><a href="#community">コミュニティ</a></li>
+      <li><a href="#contact">お問い合わせ</a></li>
+      <li><a href="#line" class="nav-cta">LINE 登録</a></li>
+    </ul>
+  </nav>
+</header>
 
-  <p>これは私の最初のサイトです。</p>
+<!-- ══ TICKER ══ -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
 
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span>📚</span> INVESTMENT KNOWLEDGE BASE
+    </div>
+    <h1>投資の知識が<br>富を生む</h1>
+    <p class="hero-sub">株式・FX・投資信託・仮想通貨まで。プロのトレーダーが使う用語を、初心者にも分かりやすく解説します。</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num">200+</span>
+        <span class="label">用語収録</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">8</span>
+        <span class="label">カテゴリ</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">無料</span>
+        <span class="label">公開中</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══ SEARCH ══ -->
+<section class="search-section" id="dictionary">
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="searchInput" placeholder="用語を検索...（例：PER、ピップス、ETF）">
+    <span class="search-icon">🔍</span>
+  </div>
+  <div class="category-tabs">
+    <button class="tab-btn active" data-cat="all">すべて</button>
+    <button class="tab-btn" data-cat="stock">📈 株式</button>
+    <button class="tab-btn" data-cat="fx">💱 FX</button>
+    <button class="tab-btn" data-cat="bond">💰 債券</button>
+    <button class="tab-btn" data-cat="fund">📊 投資信託</button>
+    <button class="tab-btn" data-cat="risk">⚡ リスク管理</button>
+    <button class="tab-btn" data-cat="macro">🌍 マクロ経済</button>
+    <button class="tab-btn" data-cat="chart">📉 チャート分析</button>
+    <button class="tab-btn" data-cat="crypto">🔮 仮想通貨</button>
+  </div>
+</section>
+
+<!-- ══ TERMS GRID ══ -->
+<section class="section" style="padding-top:0">
+  <div class="section-header">
+    <div class="section-label">GLOSSARY</div>
+    <h2 class="section-title">投資用語辞典</h2>
+  </div>
+  <div class="terms-grid" id="termsGrid"></div>
+</section>
+
+<hr class="divider">
+
+<!-- ══ SNS / LINKS ══ -->
+<section class="links-section" id="community">
+  <div class="links-inner">
+    <div class="section-header" style="margin-bottom:0">
+      <div class="section-label">COMMUNITY</div>
+      <h2 class="section-title">コミュニティに参加する</h2>
+      <p style="color:var(--silver);margin-top:12px;font-size:14px;">各プラットフォームで最新の投資情報・マーケット分析を発信中。フォローしてリアルタイムで情報をキャッチしよう。</p>
+    </div>
+    <div class="links-grid">
+      <a href="https://twitter.com/" target="_blank" class="link-btn btn-x">
+        <span class="btn-icon">𝕏</span>
+        <span class="btn-label">X (Twitter)</span>
+        <span class="btn-sub">毎日相場情報を発信</span>
+      </a>
+      <a href="https://www.instagram.com/" target="_blank" class="link-btn btn-instagram">
+        <span class="btn-icon">📷</span>
+        <span class="btn-label">Instagram</span>
+        <span class="btn-sub">チャート解説・Tips</span>
+      </a>
+      <a href="https://www.youtube.com/" target="_blank" class="link-btn btn-youtube">
+        <span class="btn-icon">▶️</span>
+        <span class="btn-label">YouTube</span>
+        <span class="btn-sub">動画で分かりやすく</span>
+      </a>
+      <a href="https://note.com/" target="_blank" class="link-btn btn-note">
+        <span class="btn-icon">✍️</span>
+        <span class="btn-label">note</span>
+        <span class="btn-sub">深掘り記事・コラム</span>
+      </a>
+      <a href="https://line.me/R/" target="_blank" class="link-btn btn-line btn-line-special" id="line">
+        <span class="btn-icon">💬</span>
+        <span class="btn-label">LINE 公式アカウントに登録</span>
+        <span class="btn-sub">登録無料 · 毎朝マーケットニュースを配信</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══ CONTACT ══ -->
+<section class="section contact-section" id="contact">
+  <div class="section-header" style="text-align:center">
+    <div class="section-label" style="justify-content:center">CONTACT</div>
+    <h2 class="section-title">お問い合わせ</h2>
+    <p style="color:var(--silver);margin-top:12px;font-size:14px;">ご質問・ご要望・メディア掲載依頼など、お気軽にご連絡ください。</p>
+  </div>
+  <div class="form-wrap">
+    <form id="contactForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">お名前<span class="form-required">*</span></label>
+          <input type="text" class="form-input" placeholder="山田 太郎" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">メールアドレス<span class="form-required">*</span></label>
+          <input type="email" class="form-input" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">お問い合わせ種別</label>
+          <select class="form-select">
+            <option value="">選択してください</option>
+            <option>用語の解説リクエスト</option>
+            <option>内容の誤りについて</option>
+            <option>メディア掲載・取材依頼</option>
+            <option>広告・タイアップ</option>
+            <option>その他</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">件名<span class="form-required">*</span></label>
+          <input type="text" class="form-input" placeholder="件名を入力" required>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">メッセージ<span class="form-required">*</span></label>
+          <textarea class="form-textarea" placeholder="ご質問・ご要望の内容をご記入ください" required></textarea>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn">送信する →</button>
+      <p class="form-note">※ 通常3営業日以内にご返信いたします。<br>このフォームはデモ用です。実際の運用時はフォームサービスを接続してください。</p>
+    </form>
+    <div class="form-success" id="formSuccess">
+      <div class="success-icon">✅</div>
+      <h3>送信が完了しました</h3>
+      <p>お問い合わせありがとうございます。<br>3営業日以内にご連絡いたします。</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">
+          <div class="logo-icon" style="width:28px;height:28px;font-size:14px">₿</div>
+          INVEST ACADEMY
+        </div>
+        <p>投資の知識でより豊かな未来を。株式・FX・仮想通貨まで、プロ水準の情報を無料でお届けします。</p>
+      </div>
+      <div class="footer-col">
+        <h4>コンテンツ</h4>
+        <ul>
+          <li><a href="#dictionary">用語辞典</a></li>
+          <li><a href="#">チャート解説</a></li>
+          <li><a href="#">相場分析</a></li>
+          <li><a href="#">初心者ガイド</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>SNS</h4>
+        <ul>
+          <li><a href="#">X (Twitter)</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">note</a></li>
+          <li><a href="#">LINE</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>サイト情報</h4>
+        <ul>
+          <li><a href="#">プロフィール</a></li>
+          <li><a href="#contact">お問い合わせ</a></li>
+          <li><a href="#">プライバシーポリシー</a></li>
+          <li><a href="#">免責事項</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 INVEST ACADEMY. All rights reserved.</p>
+      <p class="footer-disclaimer">当サイトの情報は教育目的のみです。投資の最終判断はご自身の責任で行ってください。当サイトは投資助言を行うものではありません。</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-term" id="modalTerm"></div>
+        <div class="modal-reading" id="modalReading"></div>
+      </div>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ══ JAVASCRIPT ══ -->
+<script>
+// ══ 投資用語データ ══
+const terms = [
+  {
+    id:1, cat:"stock", emoji:"📈", reading:"ピーイーアール",
+    term:"PER（株価収益率）",
+    short:"株価が1株当たり利益の何倍かを示す指標。割安・割高を判断する最も基本的な指標。",
+    desc:"PER（Price Earnings Ratio）とは、「株価 ÷ 1株当たり純利益（EPS）」で計算される株価の割安・割高を判断する指標です。一般的にPERが低いほど割安、高いほど割高とされます。",
+    example:"例：株価1,000円、EPS 100円の場合、PER = 1,000 ÷ 100 = 10倍。日本の平均PERは15〜20倍程度が目安です。",
+    tags:["株式分析","バリュー投資","財務指標"],
+    diff:2
+  },
+  {
+    id:2, cat:"stock", emoji:"💹", reading:"ピービーアール",
+    term:"PBR（株価純資産倍率）",
+    short:"株価が1株当たり純資産の何倍かを示す。1倍を割ると理論上は解散価値を下回る状態。",
+    desc:"PBR（Price Book-value Ratio）は「株価 ÷ 1株当たり純資産（BPS）」で計算されます。PBR 1倍は会社を解散したときに得られる価値と株価が等しい状態を意味します。",
+    example:"例：株価500円、BPS 250円の場合、PBR = 2.0倍。PBR 1倍未満は超割安のサインとして注目されます。",
+    tags:["株式分析","バリュー投資","財務指標"],
+    diff:2
+  },
+  {
+    id:3, cat:"fx", emoji:"💱", reading:"ピップス",
+    term:"pips（ピップス）",
+    short:"FX取引における価格変動の最小単位。USD/JPYなら0.01円、EUR/USDなら0.0001ドルが1pips。",
+    desc:"pips（Percentage In Point）はFX取引における価格変動の最小単位です。米ドル円（USD/JPY）では小数点第2位（0.01円）、ユーロドル（EUR/USD）では小数点第4位（0.0001ドル）が1pipsとなります。",
+    example:"例：USD/JPYが150.00から150.50に動いた場合、50pipsの上昇。1万通貨で1pips = 約100円の損益になります。",
+    tags:["FX基礎","為替","損益計算"],
+    diff:1
+  },
+  {
+    id:4, cat:"fx", emoji:"📊", reading:"スプレッド",
+    term:"スプレッド",
+    short:"買値（Ask）と売値（Bid）の差。FXブローカーの実質的な手数料。狭いほどトレーダーに有利。",
+    desc:"スプレッドとは、FX取引における売値（Bid）と買値（Ask）の差のことです。トレーダーは買う時は「Ask（高い方）」で、売る時は「Bid（安い方）」で取引するため、スプレッド分だけが実質的なコストになります。",
+    example:"例：USD/JPYの売値が150.00円、買値が150.02円の場合、スプレッドは2pips（0.02円）。",
+    tags:["FX基礎","コスト","ブローカー"],
+    diff:1
+  },
+  {
+    id:5, cat:"risk", emoji:"🛡️", reading:"ストップロス",
+    term:"損切り（ストップロス）",
+    short:"損失が一定額を超えた場合に自動的にポジションを決済する注文。資産を守る最重要の手法。",
+    desc:"損切り（ストップロス）とは、投資の損失が一定の水準を超えた時点でポジションを強制決済することです。感情に左右されずに損失を限定するため、プロのトレーダーが最も重視するリスク管理手法です。",
+    example:"例：100円で株を買い、90円（−10%）に下がったら自動で売る設定をする。損切りラインを決めずに投資するのは危険です。",
+    tags:["リスク管理","必須スキル","心理"],
+    diff:1
+  },
+  {
+    id:6, cat:"stock", emoji:"💸", reading:"はいとう",
+    term:"配当金・配当利回り",
+    short:"企業が株主に分配する利益。配当利回り（年間配当 ÷ 株価 × 100）が高い銘柄はインカムゲイン投資に人気。",
+    desc:"配当金は企業が稼いだ利益の一部を株主へ還元するものです。配当利回りとは年間配当金額を株価で割ったもので、数字が大きいほど投資効率が高いとされます。日本の高配当株は3〜5%以上が目安です。",
+    example:"例：株価2,000円で年間配当80円の場合、配当利回り = 80 ÷ 2,000 × 100 = 4.0%",
+    tags:["株式","インカム","長期投資"],
+    diff:1
+  },
+  {
+    id:7, cat:"chart", emoji:"🕯️", reading:"ろうそくあし",
+    term:"ローソク足",
+    short:"始値・高値・安値・終値（OHLC）の4本値を1本のローソク型で表したチャートの基本単位。",
+    desc:"ローソク足は始値・高値・安値・終値の4つの価格情報を視覚的に表現したチャートです。終値が始値より高い「陽線（白・赤）」と、低い「陰線（黒・青）」で買い方・売り方の勢いを把握できます。",
+    example:"例：上ヒゲが長い＝高値で売られた（上値が重い）。下ヒゲが長い＝安値で買われた（下値が堅い）。",
+    tags:["テクニカル分析","チャート","基礎"],
+    diff:1
+  },
+  {
+    id:8, cat:"macro", emoji:"🌍", reading:"きんりせいさく",
+    term:"金利政策・利上げ・利下げ",
+    short:"中央銀行が設定する政策金利の変更。利上げは通貨高・株安要因、利下げは通貨安・株高要因になりやすい。",
+    desc:"金利政策とは中央銀行（日本：日銀、米国：FRB）が経済のコントロールのために行う政策金利の調整です。利上げはインフレ抑制・通貨高効果、利下げは景気刺激・通貨安効果をもたらすため、市場に大きな影響を与えます。",
+    example:"例：FRBが利上げ → ドル高・円安 → 輸出企業の業績向上 → 日経平均上昇という連鎖が生じやすい。",
+    tags:["マクロ経済","中央銀行","FRB","日銀"],
+    diff:3
+  },
+  {
+    id:9, cat:"fund", emoji:"📦", reading:"イーティーエフ",
+    term:"ETF（上場投資信託）",
+    short:"株式市場に上場された投資信託。日経平均やS&P500などの指数に連動し、株のように売買できる。",
+    desc:"ETF（Exchange Traded Fund）は取引所に上場されているため株と同様にリアルタイムで売買できる投資信託です。一つのETFを買うだけで複数の銘柄に分散投資できるため、初心者にも人気の金融商品です。",
+    example:"例：「1306 TOPIX連動型ETF」を買えば、日本を代表する約2,000銘柄すべてに分散投資したのと同等の効果が得られます。",
+    tags:["投資信託","分散投資","初心者向け"],
+    diff:1
+  },
+  {
+    id:10, cat:"fx", emoji:"⚖️", reading:"れっじ",
+    term:"レバレッジ",
+    short:"少ない証拠金で大きな取引をする仕組み。日本のFXは最大25倍。利益・損失ともに拡大されるため要注意。",
+    desc:"レバレッジとは、預けた証拠金の何倍もの取引ができる仕組みです。日本の個人FXは最大25倍まで認められており、10万円の証拠金で最大250万円分の取引が可能です。ただし損失も同様に拡大するためリスク管理が必須です。",
+    example:"例：25倍レバレッジで1万ドル（150万円）のポジション。1円の円高で10,000円の損失が発生します。",
+    tags:["FX","リスク","証拠金"],
+    diff:2
+  },
+  {
+    id:11, cat:"chart", emoji:"📐", reading:"いどうへいきん",
+    term:"移動平均線（MA）",
+    short:"過去N日間の終値の平均値を繋いだ線。トレンドの方向・強さを判断する最も基本的なテクニカル指標。",
+    desc:"移動平均線（Moving Average）は一定期間の終値の平均を線で結んだものです。短期（5日・25日）と長期（75日・200日）を組み合わせることでゴールデンクロス（買いシグナル）やデッドクロス（売りシグナル）を判断できます。",
+    example:"例：25日移動平均線を株価が上抜けたら買いシグナル。長期MAが下向きの時は上昇トレンドではないため注意が必要。",
+    tags:["テクニカル分析","トレンド","シグナル"],
+    diff:2
+  },
+  {
+    id:12, cat:"risk", emoji:"💼", reading:"ぽーとふぉりお",
+    term:"ポートフォリオ",
+    short:"保有する資産の組み合わせ全体。株・債券・現金などをバランスよく組み合わせてリスクを分散する。",
+    desc:"ポートフォリオとは保有している金融資産の組み合わせ全体を指します。異なる値動きをする資産（株・債券・不動産・現金等）を組み合わせることでリスクを分散し、安定したリターンを追求するのが投資の基本原則です。",
+    example:"例：「株式60% / 債券30% / 現金10%」の配分が一般的。株が下がった時に債券が上がることで全体の損失を軽減できます。",
+    tags:["資産運用","分散投資","リスク管理"],
+    diff:2
+  },
+  {
+    id:13, cat:"macro", emoji:"💰", reading:"いんふれ",
+    term:"インフレーション（インフレ）",
+    short:"物価が継続的に上昇する現象。現金の価値が下がるため、株・不動産・コモディティへの投資が有効とされる。",
+    desc:"インフレーションとは物価が持続的に上昇し、お金の購買力が低下していく現象です。年3〜5%のインフレが続くと10〜20年で現金の価値は半減します。インフレ局面では実物資産（株・不動産・金）が相対的に強くなる傾向があります。",
+    example:"例：タンス預金100万円が20年後も100万円でも、物価が2倍になっていれば実質的な購買力は50万円相当に目減りします。",
+    tags:["マクロ経済","金融政策","資産保全"],
+    diff:2
+  },
+  {
+    id:14, cat:"bond", emoji:"🏛️", reading:"さいけん",
+    term:"債券（ボンド）",
+    short:"国や企業が資金調達のために発行する借用証書。満期に元本＋利子が返ってくる比較的安全な資産。",
+    desc:"債券は国家や企業が投資家からお金を借りる際に発行する証書です。購入者は定期的に利息（クーポン）を受け取り、満期には元本が返却されます。株式より安全性が高い反面、リターンは低めです。",
+    example:"例：国債（日本国債・米国債）、社債（トヨタ債など）。金利が上がると債券価格は下がる、という逆相関が重要です。",
+    tags:["債券","国債","固定収益"],
+    diff:2
+  },
+  {
+    id:15, cat:"crypto", emoji:"🔮", reading:"ぶろっくちぇーん",
+    term:"ブロックチェーン",
+    short:"取引記録を分散型ネットワークで管理する技術。改ざんが極めて困難で、ビットコインの基盤技術。",
+    desc:"ブロックチェーンとは、取引データをブロック単位でまとめ、それらを鎖のように繋げて管理する分散型台帳技術です。世界中のコンピュータが同じデータを保持するため、改ざんが実質的に不可能とされています。",
+    example:"例：ビットコインの全送金記録はブロックチェーン上に記録されており、誰でも閲覧可能でありながら改ざんはできません。",
+    tags:["仮想通貨","テクノロジー","DeFi"],
+    diff:3
+  },
+  {
+    id:16, cat:"chart", emoji:"📊", reading:"ふぃぼなっち",
+    term:"フィボナッチリトレースメント",
+    short:"相場の押し目・戻りの目安として使われるテクニカルツール。38.2%・50%・61.8%の水準が重要。",
+    desc:"フィボナッチリトレースメントは、相場が一方向に動いた後の「どこまで戻るか（修正）」を予測するためのツールです。黄金比（0.618）に基づいた水準で価格がサポート・レジスタンスとして機能しやすい傾向があります。",
+    example:"例：100円から150円に上昇後の調整局面で、50%水準（125円）や61.8%水準（119.1円）付近で反発することが多い。",
+    tags:["テクニカル分析","押し目","エントリーポイント"],
+    diff:3
+  },
+  {
+    id:17, cat:"stock", emoji:"📉", reading:"しょーと",
+    term:"空売り（ショート）",
+    short:"株を借りて先に売り、値下がり後に買い戻して利益を得る手法。下落相場でも利益を狙える。",
+    desc:"空売りとは証券会社から株を借りて市場で売り、後から株を買い戻して返却することで、株価下落時に利益を得る手法です。相場下落局面での利益獲得やリスクヘッジに使われますが、理論上は損失無限大のリスクがあります。",
+    example:"例：A社株を1,000円で空売り → 700円に下落後、700円で買い戻し返却 → 300円の利益。",
+    tags:["株式","売り建て","ヘッジ"],
+    diff:3
+  },
+  {
+    id:18, cat:"fund", emoji:"🌏", reading:"さんようぴーごひゃく",
+    term:"S&P500",
+    short:"米国を代表する500社の株価指数。世界最強の株価指数として、長期投資の定番ベンチマーク。",
+    desc:"S&P500はアメリカの主要500社で構成される株価指数で、米国経済全体を代表する最も重要な指数です。過去の長期平均リターンは年間約10%（配当込み）で、投資信託やETFを通じて誰でも投資可能です。",
+    example:"例：「eMAXIS Slim 米国株式（S&P500）」などのインデックスファンドを毎月積立てるのが世界的な定番投資法。",
+    tags:["米国株","インデックス","長期投資"],
+    diff:1
+  },
+];
+
+// ══ ティッカー生成 ══
+const tickerData = [
+  {name:"USD/JPY", val:"150.23", chg:"+0.18", up:true},
+  {name:"EUR/JPY", val:"162.45", chg:"-0.32", up:false},
+  {name:"日経225", val:"38,264", chg:"+124", up:true},
+  {name:"S&P500",  val:"5,318",  chg:"+18.2", up:true},
+  {name:"BTC/USD", val:"67,234", chg:"+1,234", up:true},
+  {name:"金(Gold)",val:"2,368",  chg:"-12.4", up:false},
+  {name:"原油WTI", val:"79.42",  chg:"+0.65", up:true},
+  {name:"GBP/JPY", val:"191.28", chg:"+0.44", up:true},
+];
+
+function buildTicker() {
+  const t = document.getElementById('ticker');
+  const items = [...tickerData, ...tickerData];
+  t.innerHTML = items.map(d =>
+    `<span class="ticker-item">
+      <span class="t-name">${d.name}</span>
+      <span>${d.val}</span>
+      <span class="${d.up?'t-up':'t-down'}">${d.chg}%</span>
+      <span class="ticker-sep">|</span>
+    </span>`
+  ).join('');
+}
+
+// ══ カードHTML生成 ══
+function catVisual(cat) {
+  const map = {stock:'stock',fx:'fx',bond:'bond',fund:'fund',risk:'risk',macro:'macro',chart:'chart',crypto:'crypto'};
+  return map[cat] || 'stock';
+}
+
+function diffDots(n) {
+  return [1,2,3].map(i => `<div class="diff-dot${i<=n?' active':''}"></div>`).join('');
+}
+
+function renderCard(t, idx) {
+  return `
+  <div class="term-card" data-cat="${t.cat}" data-id="${t.id}" style="animation-delay:${idx*0.05}s">
+    <div class="card-visual ${catVisual(t.cat)}">
+      <span class="card-emoji">${t.emoji}</span>
+      <span class="card-category-badge">${catLabel(t.cat)}</span>
+    </div>
+    <div class="card-body">
+      <div class="card-term">${t.term}</div>
+      <div class="card-reading">${t.reading}</div>
+      <p class="card-desc">${t.short}</p>
+      <div class="card-footer">
+        <div class="difficulty" title="難易度">${diffDots(t.diff)}</div>
+        <a class="card-link" href="#">詳細を見る →</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+function catLabel(cat) {
+  const m = {stock:'株式',fx:'FX',bond:'債券',fund:'投信',risk:'リスク',macro:'経済',chart:'チャート',crypto:'仮想通貨'};
+  return m[cat] || cat;
+}
+
+// ══ グリッド描画 ══
+function renderGrid(filtered) {
+  const g = document.getElementById('termsGrid');
+  if (!filtered.length) {
+    g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted)">該当する用語が見つかりませんでした</div>';
+    return;
+  }
+  g.innerHTML = filtered.map((t,i) => renderCard(t,i)).join('');
+  // クリックイベント再バインド
+  document.querySelectorAll('.term-card').forEach(card => {
+    card.addEventListener('click', () => openModal(parseInt(card.dataset.id)));
+  });
+}
+
+// ══ フィルタリング ══
+let currentCat = 'all';
+let currentSearch = '';
+
+function filterTerms() {
+  return terms.filter(t => {
+    const catOk = currentCat === 'all' || t.cat === currentCat;
+    const searchOk = !currentSearch ||
+      t.term.includes(currentSearch) ||
+      t.reading.includes(currentSearch) ||
+      t.short.includes(currentSearch) ||
+      t.tags.some(tag => tag.includes(currentSearch));
+    return catOk && searchOk;
+  });
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    renderGrid(filterTerms());
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  currentSearch = e.target.value.trim();
+  renderGrid(filterTerms());
+});
+
+// ══ モーダル ══
+function openModal(id) {
+  const t = terms.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('modalTerm').textContent = t.term;
+  document.getElementById('modalReading').textContent = t.reading;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-section">
+      <div class="modal-section-title">解説</div>
+      <p>${t.desc}</p>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">具体例</div>
+      <div class="modal-example">${t.example}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">関連タグ</div>
+      <div class="modal-tags">${t.tags.map(tag => `<span class="modal-tag"># ${tag}</span>`).join('')}</div>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ══ フォーム ══
+document.getElementById('contactForm').addEventListener('submit', e => {
+  e.preventDefault();
+  document.getElementById('contactForm').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+});
+
+// ══ 初期化 ══
+buildTicker();
+renderGrid(terms);
+</script>
 </body>
 </html>
