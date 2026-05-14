@@ -1,24 +1,3 @@
 {
-  "version": 2,
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/API/$1"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/API/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
-        { "key": "Cache-Control", "value": "s-maxage=60, stale-while-revalidate=120" }
-      ]
-    }
-  ],
-  "functions": {
-    "API/prices.js": {
-      "maxDuration": 10
-    }
-  }
+  "version": 2
 }
