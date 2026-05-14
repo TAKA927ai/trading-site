@@ -857,6 +857,80 @@ footer {
   .footer-top { grid-template-columns: 1fr; }
   .links-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ══ PRICE BOARD ══ */
+.price-board-section {
+  background: var(--bg-darkcard);
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+  padding: 48px 24px;
+}
+.price-board-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.price-board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.price-board-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.price-update-info {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.refresh-btn {
+  background: none;
+  border: 1px solid var(--border-dim);
+  color: var(--silver);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.price-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  border-radius: 10px;
+  padding: 16px 18px;
+  transition: border-color .25s;
+}
+.price-card:hover { border-color: var(--border); }
+.price-card.up   { border-color: rgba(0,212,170,0.2); }
+.price-card.down { border-color: rgba(224,85,85,0.2); }
+.pc-symbol { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing:.1em; margin-bottom:4px; }
+.pc-name   { font-size: 12px; color: var(--silver); margin-bottom: 10px; }
+.pc-price  { font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+.pc-change { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; }
+.pc-pct    { padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+.pc-pct.up   { background: rgba(0,212,170,0.12); color: var(--accent-teal); }
+.pc-pct.down { background: rgba(224,85,85,0.12);  color: var(--accent-red);  }
+.pc-pct.flat { background: rgba(255,255,255,0.06); color: var(--text-muted);  }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+@keyframes shimmer { 0%,100%{opacity:.6} 50%{opacity:.3} }
+.pc-price.loading { background: var(--bg-elevated); border-radius: 4px; color: transparent; animation: shimmer 1.5s ease infinite; }
+@media(max-width:768px){ .price-grid{ grid-template-columns: repeat(2,1fr); } }
+
 </style>
 </head>
 <body>
@@ -910,6 +984,28 @@ footer {
         <span class="label">公開中</span>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ══ マーケット価格ボード ══ -->
+<section class="price-board-section" id="prices">
+  <div class="price-board-inner">
+    <div class="price-board-header">
+      <div class="price-board-title">📊 マーケット価格</div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="price-update-info">
+          <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent-teal);animation:blink 1.5s ease-in-out infinite;"></span>
+          <span id="lastUpdateTime">取得中...</span>
+        </div>
+        <button class="refresh-btn" onclick="fetchAllPrices()">↻ 更新</button>
+      </div>
+    </div>
+    <div class="price-grid" id="priceGrid">
+      <!-- 価格カードはJSで生成 -->
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:16px;text-align:right;">
+      ※ 為替・仮想通貨は最大数分の遅延があります。投資判断は公式取引所でご確認ください。
+    </p>
   </div>
 </section>
 
@@ -1295,6 +1391,56 @@ function buildTicker(data) {
   ).join('');
 }
 
+
+/* ── 価格カード定義 ── */
+const PRICE_ITEMS = [
+  { id:'usd_jpy',  symbol:'USD/JPY', name:'ドル円',       emoji:'💱' },
+  { id:'eur_jpy',  symbol:'EUR/JPY', name:'ユーロ円',     emoji:'💶' },
+  { id:'btc_usd',  symbol:'BTC/USD', name:'ビットコイン', emoji:'₿'  },
+  { id:'eth_usd',  symbol:'ETH/USD', name:'イーサリアム', emoji:'⬡'  },
+];
+
+/* ── スケルトン表示 ── */
+function showSkeleton() {
+  const grid = document.getElementById('priceGrid');
+  if (!grid) return;
+  grid.innerHTML = PRICE_ITEMS.map(item => `
+    <div class="price-card">
+      <div class="pc-symbol">${item.symbol}</div>
+      <div class="pc-name">${item.emoji} ${item.name}</div>
+      <div class="pc-price loading">---</div>
+      <div class="pc-change"><span class="pc-pct flat">--</span></div>
+    </div>`).join('');
+}
+
+/* ── 価格カード描画 ── */
+function renderPriceCards(priceMap) {
+  const grid = document.getElementById('priceGrid');
+  if (!grid) return;
+  grid.innerHTML = PRICE_ITEMS.map(item => {
+    const d = priceMap[item.id];
+    if (!d) return `
+      <div class="price-card">
+        <div class="pc-symbol">${item.symbol}</div>
+        <div class="pc-name">${item.emoji} ${item.name}</div>
+        <div class="pc-price" style="font-size:14px;color:var(--text-muted)">取得失敗</div>
+        <div class="pc-change"><span class="pc-pct flat">--</span></div>
+      </div>`;
+    const isUp   = d.chg >= 0;
+    const pctCls = isUp ? 'up' : 'down';
+    const arrow  = isUp ? '▲' : '▼';
+    return `
+      <div class="price-card ${pctCls}">
+        <div class="pc-symbol">${item.symbol}</div>
+        <div class="pc-name">${item.emoji} ${item.name}</div>
+        <div class="pc-price">${d.val}</div>
+        <div class="pc-change">
+          <span class="pc-pct ${pctCls}">${arrow} ${Math.abs(d.chg).toFixed(2)}%</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
 /* ── CoinGecko から仮想通貨価格取得 ── */
 async function fetchCrypto() {
   try {
@@ -1362,29 +1508,53 @@ async function fetchForex() {
   }
 }
 
-/* ── 全データ取得＆ティッカー更新 ── */
+/* ── 全データ取得＆ティッカー・価格ボード更新 ── */
 async function fetchAllPrices() {
-  const statusEl = document.getElementById('tickerStatus');
+  const statusEl  = document.getElementById('tickerStatus');
+  const updateEl  = document.getElementById('lastUpdateTime');
   if (statusEl) statusEl.textContent = '取得中...';
+  showSkeleton();
 
   const [crypto, forex] = await Promise.allSettled([fetchCrypto(), fetchForex()]);
 
   const cryptoData = crypto.status === 'fulfilled' ? crypto.value : [];
   const forexData  = forex.status  === 'fulfilled' ? forex.value  : [];
+  const allData    = [...forexData, ...cryptoData];
 
-  const allData = [...forexData, ...cryptoData];
-
+  /* ── ティッカー更新 ── */
   if (allData.length > 0) {
     liveData = allData;
     buildTicker(allData);
-    if (statusEl) {
-      const now = new Date();
-      statusEl.textContent = now.toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'}) + ' 更新';
-    }
   } else {
     buildTicker(fallbackData);
-    if (statusEl) statusEl.textContent = '取得失敗';
   }
+
+  /* ── 価格ボード更新 ── */
+  const cryptoRaw = crypto.status === 'fulfilled' ? crypto.value : [];
+  const forexRaw  = forex.status  === 'fulfilled' ? forex.value  : [];
+
+  const priceMap = {};
+
+  /* 為替 */
+  forexRaw.forEach(d => {
+    if (d.name === 'USD/JPY') priceMap['usd_jpy'] = { val: d.val, chg: 0 };
+    if (d.name === 'EUR/JPY') priceMap['eur_jpy'] = { val: d.val, chg: 0 };
+  });
+
+  /* 仮想通貨 */
+  cryptoRaw.forEach(d => {
+    const chg = parseFloat(d.chg) * (d.up ? 1 : -1);
+    if (d.name === 'BTC/USD') priceMap['btc_usd'] = { val: d.val, chg };
+    if (d.name === 'ETH/USD') priceMap['eth_usd'] = { val: d.val, chg };
+  });
+
+  renderPriceCards(priceMap);
+
+  /* 更新時刻 */
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  if (statusEl) statusEl.textContent = timeStr + ' 更新';
+  if (updateEl) updateEl.textContent = '最終更新: ' + timeStr;
 }
 
 /* ── 60秒ごとに自動更新 ── */
