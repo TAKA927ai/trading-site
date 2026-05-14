@@ -1474,38 +1474,72 @@ async function fetchCrypto() {
   }
 }
 
-/* ── Frankfurter から為替レート取得（EUR基準） ── */
+/* ── 為替レート取得（複数API試行） ── */
 async function fetchForex() {
+  /* API 1: Frankfurter (USD→JPY直接取得) */
   try {
     const res = await fetch(
-      'https://api.frankfurter.app/latest?from=USD&to=JPY,EUR,GBP',
+      'https://api.frankfurter.app/latest?from=USD&to=JPY',
       { signal: AbortSignal.timeout(8000) }
     );
     if (!res.ok) throw new Error('Frankfurter error');
     const d = await res.json();
-    const result = [];
     if (d.rates && d.rates.JPY) {
-      result.push({
+      const usdJpy = d.rates.JPY;
+      /* EUR/JPYはEUR→JPYを別途取得 */
+      let eurJpy = null;
+      try {
+        const res2 = await fetch(
+          'https://api.frankfurter.app/latest?from=EUR&to=JPY',
+          { signal: AbortSignal.timeout(8000) }
+        );
+        if (res2.ok) {
+          const d2 = await res2.json();
+          if (d2.rates && d2.rates.JPY) eurJpy = d2.rates.JPY;
+        }
+      } catch(e2) {}
+
+      const result = [{
         name: 'USD/JPY',
-        val: d.rates.JPY.toFixed(2),
-        chg: '--',
+        val: usdJpy.toFixed(2) + '円',
+        chg: 0,
         up: true
-      });
+      }];
+      if (eurJpy) {
+        result.push({
+          name: 'EUR/JPY',
+          val: eurJpy.toFixed(2) + '円',
+          chg: 0,
+          up: true
+        });
+      }
+      return result;
     }
-    if (d.rates && d.rates.EUR) {
-      const eurJpy = d.rates.JPY / d.rates.EUR;
-      result.push({
-        name: 'EUR/JPY',
-        val: eurJpy.toFixed(2),
-        chg: '--',
-        up: true
-      });
-    }
-    return result;
   } catch(e) {
     console.warn('Frankfurter取得失敗:', e.message);
-    return [];
   }
+
+  /* API 2: exchangerate-api (フォールバック) */
+  try {
+    const res = await fetch(
+      'https://open.er-api.com/v6/latest/USD',
+      { signal: AbortSignal.timeout(8000) }
+    );
+    if (!res.ok) throw new Error('er-api error');
+    const d = await res.json();
+    if (d.rates && d.rates.JPY) {
+      const usdJpy = d.rates.JPY;
+      const eurJpy = d.rates.JPY / d.rates.EUR;
+      return [
+        { name:'USD/JPY', val: usdJpy.toFixed(2) + '円', chg: 0, up: true },
+        { name:'EUR/JPY', val: eurJpy.toFixed(2) + '円', chg: 0, up: true },
+      ];
+    }
+  } catch(e2) {
+    console.warn('er-api取得失敗:', e2.message);
+  }
+
+  return [];
 }
 
 /* ── 全データ取得＆ティッカー・価格ボード更新 ── */
@@ -1537,8 +1571,8 @@ async function fetchAllPrices() {
 
   /* 為替 */
   forexRaw.forEach(d => {
-    if (d.name === 'USD/JPY') priceMap['usd_jpy'] = { val: d.val, chg: 0 };
-    if (d.name === 'EUR/JPY') priceMap['eur_jpy'] = { val: d.val, chg: 0 };
+    if (d.name === 'USD/JPY') priceMap['usd_jpy'] = { val: d.val, chg: d.chg || 0 };
+    if (d.name === 'EUR/JPY') priceMap['eur_jpy'] = { val: d.val, chg: d.chg || 0 };
   });
 
   /* 仮想通貨 */
