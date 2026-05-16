@@ -1093,15 +1093,15 @@ footer {
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label">お名前<span class="form-required">*</span></label>
-          <input type="text" class="form-input" placeholder="山田 太郎" required>
+          <input type="text" name="name" class="form-input" placeholder="山田 太郎" required>
         </div>
         <div class="form-group">
           <label class="form-label">メールアドレス<span class="form-required">*</span></label>
-          <input type="email" class="form-input" placeholder="your@email.com" required>
+          <input type="email" name="email" class="form-input" placeholder="your@email.com" required>
         </div>
         <div class="form-group full">
           <label class="form-label">お問い合わせ種別</label>
-          <select class="form-select">
+          <select name="subject_type" class="form-select">
             <option value="">選択してください</option>
             <option>用語の解説リクエスト</option>
             <option>内容の誤りについて</option>
@@ -1112,11 +1112,11 @@ footer {
         </div>
         <div class="form-group full">
           <label class="form-label">件名<span class="form-required">*</span></label>
-          <input type="text" class="form-input" placeholder="件名を入力" required>
+          <input type="text" name="subject" class="form-input" placeholder="件名を入力" required>
         </div>
         <div class="form-group full">
           <label class="form-label">メッセージ<span class="form-required">*</span></label>
-          <textarea class="form-textarea" placeholder="ご質問・ご要望の内容をご記入ください" required></textarea>
+          <textarea name="message" class="form-textarea" placeholder="ご質問・ご要望の内容をご記入ください" required></textarea>
         </div>
       </div>
       <button type="submit" class="submit-btn">送信する →</button>
