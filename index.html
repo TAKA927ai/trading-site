@@ -1089,7 +1089,7 @@ footer {
     <p style="color:var(--silver);margin-top:12px;font-size:14px;">ご質問・ご要望・メディア掲載依頼など、お気軽にご連絡ください。</p>
   </div>
   <div class="form-wrap">
-    <form id="contactForm">
+    <form id="contactForm" action="https://formspree.io/f/mojrgkgk" method="POST">
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label">お名前<span class="form-required">*</span></label>
@@ -1707,11 +1707,7 @@ function closeModal() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 // ══ フォーム ══
-document.getElementById('contactForm').addEventListener('submit', e => {
-  e.preventDefault();
-  document.getElementById('contactForm').style.display = 'none';
-  document.getElementById('formSuccess').style.display = 'block';
-});
+/* Formspreeに直接送信（e.preventDefault()なし） */
 
 // ══ 初期化 ══
 renderGrid(terms);
